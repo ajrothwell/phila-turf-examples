@@ -20,14 +20,15 @@ import DemoMap from './components/DemoMap.vue'
           data, and data classification and statistics tools.
         </blockquote>
         <p>
-          Web maps need a lot of specialized code to work, but most of that is
-          UI plumbing. This app uses
+          Most of the code that makes a web map work is rendering, panning,
+          zooming, and handling clicks — the same machinery every map needs.
+          This app uses
           <a href="https://maplibre.org/" target="_blank" rel="noreferrer">
             MapLibre GL
           </a>
-          under the hood, and most of MapLibre's APIs are already wrapped up
-          inside <strong>phila-ui-4's map-core</strong> — meaning you don't
-          have to know that much MapLibre to put a working map on a page.
+          for that, and most of MapLibre's APIs are already wrapped up inside
+          <strong>phila-ui-4's map-core</strong>, so you don't have to know
+          much MapLibre to put a working map on a page.
         </p>
         <p>
           Turf is different. Turf functions aren't UI components — they're GIS
