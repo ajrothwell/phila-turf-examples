@@ -2,6 +2,7 @@
 import { RouterLink } from 'vue-router'
 
 const items = [
+  { to: '/', label: 'Intro' },
   { to: '/examples/geojson-helpers', label: 'point / line / polygon' },
   { to: '/examples/feature-collection', label: 'featureCollection' },
   { to: '/examples/bbox', label: 'bbox' },

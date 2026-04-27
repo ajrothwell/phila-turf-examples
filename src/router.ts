@@ -3,7 +3,8 @@ import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-rou
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/examples/geojson-helpers',
+    name: 'home',
+    component: () => import('./HomePage.vue'),
   },
   {
     path: '/examples/geojson-helpers',
