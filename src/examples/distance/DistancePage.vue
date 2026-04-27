@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
+// #region turf-import
 import { point } from '@turf/helpers'
 import { distance } from '@turf/distance'
+// #endregion turf-import
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons'
 import type { Feature, FeatureCollection, Point } from 'geojson'
 import {
@@ -15,7 +17,9 @@ import ExamplePage from '../../shell/ExamplePage.vue'
 import DemoMap from '../../components/DemoMap.vue'
 import CodePanel from '../../components/CodePanel.vue'
 import { fetchAgolFeatures } from '../../lib/arcgis'
-import { TURF_SNIPPET } from './snippet'
+import { highlight } from '../../lib/highlight'
+import { extractRegions } from '../../lib/extractRegions'
+import pageSource from './DistancePage.vue?raw'
 
 const RINKS_SERVICE_URL =
   'https://services.arcgis.com/6fiE7QkLWSPMd0N5/arcgis/rest/services/IceRinks/FeatureServer/0'
@@ -23,7 +27,7 @@ const NAME_FIELD = 'AMENITY_NA'
 
 const rinks = ref<FeatureCollection<Point> | null>(null)
 const userLngLat = ref<[number, number] | null>(null)
-const selectedIdx = ref<number | null>(null)
+const selectedIndex = ref<number | null>(null)
 const error = ref<string | null>(null)
 
 onMounted(async () => {
@@ -34,15 +38,16 @@ onMounted(async () => {
   }
 })
 
-const rinkName = (idx: number): string => {
-  return String(rinks.value?.features[idx]?.properties?.[NAME_FIELD] ?? `Rink ${idx + 1}`)
+const rinkName = (index: number): string => {
+  return String(rinks.value?.features[index]?.properties?.[NAME_FIELD] ?? `Rink ${index + 1}`)
 }
 
-const rinkLngLat = (idx: number): [number, number] => {
-  const c = rinks.value!.features[idx].geometry.coordinates
+const rinkLngLat = (index: number): [number, number] => {
+  const c = rinks.value!.features[index].geometry.coordinates
   return [c[0], c[1]]
 }
 
+// #region turf-usage
 const distanceLabels = computed<(string | undefined)[]>(() => {
   if (!rinks.value || !userLngLat.value) return []
   return rinks.value.features.map((rink) => {
@@ -50,6 +55,7 @@ const distanceLabels = computed<(string | undefined)[]>(() => {
     return `${miles.toFixed(2)} mi`
   })
 })
+// #endregion turf-usage
 
 const onMapClick = (payload: { lngLat: { lng: number; lat: number } }) => {
   userLngLat.value = [payload.lngLat.lng, payload.lngLat.lat]
@@ -63,11 +69,25 @@ const onSearchResult = (result: unknown) => {
 }
 
 const popupLngLat = computed<[number, number] | null>(() => {
-  return selectedIdx.value !== null ? rinkLngLat(selectedIdx.value) : null
+  return selectedIndex.value !== null ? rinkLngLat(selectedIndex.value) : null
 })
 
 const popupName = computed<string>(() => {
-  return selectedIdx.value !== null ? rinkName(selectedIdx.value) : ''
+  return selectedIndex.value !== null ? rinkName(selectedIndex.value) : ''
+})
+
+const scriptSnippetHtml = ref('')
+const templateSnippetHtml = ref('')
+
+watchEffect(async () => {
+  scriptSnippetHtml.value = await highlight(
+    extractRegions(pageSource, ['turf-import', 'turf-usage']),
+    'ts',
+  )
+  templateSnippetHtml.value = await highlight(
+    extractRegions(pageSource, ['turf-template']),
+    'vue',
+  )
 })
 </script>
 
@@ -76,7 +96,6 @@ const popupName = computed<string>(() => {
     <template #code>
       <CodePanel
         title="distance"
-        :snippet="TURF_SNIPPET"
         source-path="src/examples/distance/DistancePage.vue"
       >
         <p>
@@ -91,6 +110,9 @@ const popupName = computed<string>(() => {
         <p v-if="error" style="color: var(--color-text-error, #b21d10);">
           Couldn't load rinks: {{ error }}
         </p>
+        <div class="snippet" v-html="scriptSnippetHtml" />
+        <p class="snippet-label">And in the template:</p>
+        <div class="snippet" v-html="templateSnippetHtml" />
       </CodePanel>
     </template>
 
@@ -104,18 +126,20 @@ const popupName = computed<string>(() => {
         />
         <template v-if="rinks">
           <MapMarker
-            v-for="(_, idx) in rinks.features"
-            :key="idx"
-            :lng-lat="rinkLngLat(idx)"
+            v-for="(_, index) in rinks.features"
+            :key="index"
+            :lng-lat="rinkLngLat(index)"
           >
             <div @click.stop>
+              <!-- #region turf-template -->
               <MapIconTextPin
                 :icon="faSnowflake"
-                :text="distanceLabels[idx]"
+                :text="distanceLabels[index]"
                 color-theme="dark-primary"
                 size="large"
-                @click="selectedIdx = idx"
+                @click="selectedIndex = index"
               />
+              <!-- #endregion turf-template -->
             </div>
           </MapMarker>
         </template>
@@ -124,7 +148,7 @@ const popupName = computed<string>(() => {
           v-if="popupLngLat"
           :lng-lat="popupLngLat"
           :close-on-click="false"
-          @close="selectedIdx = null"
+          @close="selectedIndex = null"
         >
           <div style="padding: 4px 8px;">
             <strong>{{ popupName }}</strong>
@@ -158,3 +182,26 @@ const popupName = computed<string>(() => {
     </template>
   </ExamplePage>
 </template>
+
+<style scoped>
+.snippet {
+  font-size: 0.85rem;
+  border: 1px solid var(--color-border-default, #d4d8d9);
+  border-radius: 4px;
+  overflow-x: auto;
+  background: #fff;
+  margin-top: 0.5rem;
+}
+
+.snippet :deep(pre) {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: transparent !important;
+}
+
+.snippet-label {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #444);
+}
+</style>
