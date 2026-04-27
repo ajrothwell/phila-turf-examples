@@ -4,6 +4,10 @@ import AppShell from './shell/AppShell.vue'
 
 <template>
   <AppShell>
-    <RouterView />
+    <RouterView v-slot="{ Component }">
+      <KeepAlive>
+        <component :is="Component" />
+      </KeepAlive>
+    </RouterView>
   </AppShell>
 </template>
