@@ -42,4 +42,22 @@ import Sidebar from './Sidebar.vue'
   display: flex;
   /* Edge-to-edge: NO padding here. The example page fills this. */
 }
+
+#app-header :deep(.phila-navbar-brand) {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+#app-header :deep(.phila-navbar-brand a) {
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  padding: 0.5rem 0;
+}
+
+#app-header :deep(.phila-navbar-brand a:hover) {
+  text-decoration: none;
+  opacity: 0.85;
+}
 </style>
