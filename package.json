@@ -16,9 +16,12 @@
     "@phila/phila-ui-app-header": "latest",
     "@phila/phila-ui-core": "latest",
     "@phila/phila-ui-map-core": "1.0.1-beta.7",
+    "@turf/bbox": "^7.3.5",
     "@turf/distance": "^7.0.0",
     "@turf/helpers": "^7.0.0",
+    "@turf/intersect": "^7.3.5",
     "@turf/nearest-point": "^7.0.0",
+    "@turf/voronoi": "^7.3.5",
     "shiki": "^1.0.0",
     "vue": "^3.5.0",
     "vue-router": "^4.4.0"

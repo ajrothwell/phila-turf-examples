@@ -1,34 +1,48 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { point } from '@turf/helpers'
+import { computed, onMounted, ref, watchEffect } from 'vue'
+import { point, featureCollection } from '@turf/helpers'
 import { nearestPoint } from '@turf/nearest-point'
-import type { Feature, FeatureCollection, Point } from 'geojson'
-import { CircleLayer, MapPopup } from '@phila/phila-ui-map-core'
+import { voronoi } from '@turf/voronoi'
+import { bbox } from '@turf/bbox'
+import { intersect } from '@turf/intersect'
+import type { Feature, FeatureCollection, Point, Polygon, MultiPolygon } from 'geojson'
+import { CircleLayer, FillLayer, LineLayer, MapPopup } from '@phila/phila-ui-map-core'
 import ExamplePage from '../../shell/ExamplePage.vue'
 import DemoMap from '../../components/DemoMap.vue'
 import CodePanel from '../../components/CodePanel.vue'
+import { highlight } from '../../lib/highlight'
 import { fetchAgolFeatures } from '../../lib/arcgis'
-import { TURF_SNIPPET } from './snippet'
+import { TURF_SNIPPET, VORONOI_SNIPPET } from './snippet'
 
 const FARMERS_SERVICE_URL =
   'https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Farmers_Markets/FeatureServer/0'
+const CITY_LIMITS_URL =
+  'https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/City_Limits/FeatureServer/0'
 const NAME_FIELD = 'name'
 
 const markets = ref<FeatureCollection<Point> | null>(null)
+const cityLimits = ref<Feature<Polygon | MultiPolygon> | null>(null)
 const userLngLat = ref<[number, number] | null>(null)
 const hoveredFeature = ref<Feature<Point> | null>(null)
 const error = ref<string | null>(null)
+const voronoiOn = ref(false)
 
 onMounted(async () => {
   try {
-    const fc = await fetchAgolFeatures(FARMERS_SERVICE_URL)
-    markets.value = fc as FeatureCollection<Point>
+    const [marketsFc, cityFc] = await Promise.all([
+      fetchAgolFeatures(FARMERS_SERVICE_URL),
+      fetchAgolFeatures(CITY_LIMITS_URL),
+    ])
+    markets.value = marketsFc as FeatureCollection<Point>
+    const first = cityFc.features[0]
+    if (first && (first.geometry.type === 'Polygon' || first.geometry.type === 'MultiPolygon')) {
+      cityLimits.value = first as Feature<Polygon | MultiPolygon>
+    }
   } catch (e) {
     error.value = (e as Error).message
   }
 })
 
-// nearest market index (computed from Turf)
 const nearestIndex = computed<number | null>(() => {
   if (!markets.value || !userLngLat.value) return null
   const userPoint = point(userLngLat.value)
@@ -49,6 +63,28 @@ const marketsSource = computed(() => {
     })),
   }
   return { type: 'geojson' as const, data: annotated }
+})
+
+const voronoiCells = computed<FeatureCollection<Polygon | MultiPolygon> | null>(() => {
+  if (!markets.value || !cityLimits.value) return null
+  const cityBbox = bbox(cityLimits.value)
+  const cells = voronoi(markets.value as FeatureCollection<Point>, { bbox: cityBbox })
+  const clipped: Feature<Polygon | MultiPolygon>[] = []
+  for (const cell of cells.features) {
+    if (!cell) continue
+    const result = intersect(
+      featureCollection([cell, cityLimits.value]) as FeatureCollection<Polygon | MultiPolygon>,
+    )
+    if (result) clipped.push(result)
+  }
+  return featureCollection(clipped)
+})
+
+const voronoiSource = computed(() => {
+  return {
+    type: 'geojson' as const,
+    data: voronoiCells.value ?? { type: 'FeatureCollection' as const, features: [] },
+  }
 })
 
 const popupFeature = computed<Feature<Point> | null>(() => {
@@ -75,8 +111,6 @@ const onMapClick = (payload: { lngLat: { lng: number; lat: number } }) => {
 }
 
 const onSearchResult = (result: unknown) => {
-  // map-core's @search-result emits the AisGeocodeResult shape:
-  // { geometry: { coordinates: [lng, lat] }, properties: {...} }
   const r = result as { geometry?: { coordinates?: [number, number] } }
   if (r?.geometry?.coordinates) {
     userLngLat.value = r.geometry.coordinates
@@ -91,6 +125,11 @@ const onCircleEnter = (e: any) => {
 const onCircleLeave = () => {
   hoveredFeature.value = null
 }
+
+const voronoiHtml = ref('')
+watchEffect(async () => {
+  voronoiHtml.value = await highlight(VORONOI_SNIPPET, 'ts')
+})
 </script>
 
 <template>
@@ -108,16 +147,44 @@ const onCircleLeave = () => {
         <p>
           Search an address (top-left of the map) or click anywhere on the map
           to drop your point. The nearest farmers market grows in size and its
-          name tooltip pins open.
+          name popup pins open.
         </p>
         <p v-if="error" style="color: var(--color-text-error, #b21d10);">
           Couldn't load markets: {{ error }}
         </p>
+        <h2>Voronoi triangles</h2>
+        <p>
+          Toggle the button on the map's bottom-left to overlay the Voronoi
+          diagram of the markets, clipped to the city limits. Each polygon
+          contains every point in the city closer to that market than to any
+          other.
+        </p>
+        <div class="snippet" v-html="voronoiHtml" />
       </CodePanel>
     </template>
 
     <template #map>
       <DemoMap with-search @click="onMapClick" @search-result="onSearchResult">
+        <FillLayer
+          v-if="voronoiOn"
+          id="voronoi-fill"
+          :source="voronoiSource"
+          :paint="{
+            'fill-color': '#555555',
+            'fill-opacity': 0.15,
+          }"
+        />
+        <LineLayer
+          v-if="voronoiOn"
+          id="voronoi-outline"
+          :source="voronoiSource"
+          :paint="{
+            'line-color': '#222222',
+            'line-width': 1.5,
+            'line-opacity': 1,
+          }"
+        />
+
         <CircleLayer
           id="markets"
           :source="marketsSource"
@@ -137,7 +204,6 @@ const onCircleLeave = () => {
           </div>
         </MapPopup>
 
-        <!-- The user's clicked/searched point. -->
         <CircleLayer
           v-if="userLngLat"
           id="user-point"
@@ -162,6 +228,55 @@ const onCircleLeave = () => {
           }"
         />
       </DemoMap>
+
+      <button
+        v-if="markets && cityLimits"
+        class="voronoi-toggle"
+        @click="voronoiOn = !voronoiOn"
+      >
+        {{ voronoiOn ? 'Hide' : 'Add' }} Voronoi triangles
+      </button>
     </template>
   </ExamplePage>
 </template>
+
+<style scoped>
+.snippet {
+  font-size: 0.85rem;
+  border: 1px solid var(--color-border-default, #d4d8d9);
+  border-radius: 4px;
+  overflow-x: auto;
+  background: #fff;
+  margin-top: 0.5rem;
+}
+
+.snippet :deep(pre) {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: transparent !important;
+}
+
+h2 {
+  font-size: 1rem;
+  margin: 0.5rem 0 0;
+}
+
+.voronoi-toggle {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  z-index: 5;
+  padding: 0.5rem 0.75rem;
+  background: #ffffff;
+  border: 1px solid var(--color-border-default, #d4d8d9);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  font-family: inherit;
+}
+
+.voronoi-toggle:hover {
+  background: #f4f6f7;
+}
+</style>
