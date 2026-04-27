@@ -126,8 +126,10 @@ const onCircleLeave = () => {
   hoveredFeature.value = null
 }
 
+const nearestHtml = ref('')
 const voronoiHtml = ref('')
 watchEffect(async () => {
+  nearestHtml.value = await highlight(TURF_SNIPPET, 'ts')
   voronoiHtml.value = await highlight(VORONOI_SNIPPET, 'ts')
 })
 </script>
@@ -137,7 +139,6 @@ watchEffect(async () => {
     <template #code>
       <CodePanel
         title="nearestPoint"
-        :snippet="TURF_SNIPPET"
         source-path="src/examples/nearest-point/NearestPointPage.vue"
       >
         <p>
@@ -152,14 +153,19 @@ watchEffect(async () => {
         <p v-if="error" style="color: var(--color-text-error, #b21d10);">
           Couldn't load markets: {{ error }}
         </p>
-        <h2>Voronoi triangles</h2>
-        <p>
-          Toggle the button on the map's bottom-left to overlay the Voronoi
-          diagram of the markets, clipped to the city limits. Each polygon
-          contains every point in the city closer to that market than to any
-          other.
-        </p>
-        <div class="snippet" v-html="voronoiHtml" />
+        <div class="snippet" v-html="nearestHtml" />
+
+        <section class="bonus">
+          <div class="bonus-label">BONUS LESSON</div>
+          <h2>Voronoi triangles</h2>
+          <p>
+            Toggle the button in the map's bottom-left to overlay the Voronoi
+            diagram of the markets, clipped to Philly's city limits. Each
+            polygon contains every point in the city closer to that market
+            than to any other.
+          </p>
+          <div class="snippet" v-html="voronoiHtml" />
+        </section>
       </CodePanel>
     </template>
 
@@ -256,9 +262,27 @@ watchEffect(async () => {
   background: transparent !important;
 }
 
-h2 {
-  font-size: 1rem;
-  margin: 0.5rem 0 0;
+.bonus {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 2px dashed var(--color-border-default, #d4d8d9);
+}
+
+.bonus-label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-brand-primary, #0f4d90);
+  background: rgba(15, 77, 144, 0.08);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  margin-bottom: 0.5rem;
+}
+
+.bonus h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.25rem;
 }
 
 .voronoi-toggle {
