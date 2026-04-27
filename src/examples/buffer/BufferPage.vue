@@ -253,7 +253,7 @@ watchEffect(async () => {
 }
 
 .zip-input {
-  width: 7ch;
+  width: 10ch;
   font-family: inherit;
   font-size: 0.85rem;
   padding: 0.2rem 0.4rem;
