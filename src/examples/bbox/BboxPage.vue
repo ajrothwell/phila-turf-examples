@@ -222,7 +222,7 @@ watchEffect(async () => {
 .bbox-control {
   position: absolute;
   top: 12px;
-  right: 56px;
+  left: 12px;
   z-index: 5;
   background: #ffffff;
   border: 1px solid var(--color-border-default, #d4d8d9);
