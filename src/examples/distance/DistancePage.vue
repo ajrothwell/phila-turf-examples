@@ -95,7 +95,7 @@ const popupName = computed<string>(() => {
     </template>
 
     <template #map>
-      <DemoMap :zoom="10.7" @click="onMapClick">
+      <DemoMap :zoom="9.7" @click="onMapClick">
         <MapSearchControl
           position="top-left"
           placeholder="Search a Philly address"
