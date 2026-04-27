@@ -12,7 +12,7 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: 'load', map: unknown): void
-  (e: 'click', payload: unknown): void
+  (e: 'click', payload: { lngLat: { lng: number; lat: number } }): void
   (e: 'searchResult', result: unknown): void
 }>()
 </script>
@@ -25,7 +25,7 @@ const emit = defineEmits<{
     :navigation-controls="{ position: 'top-right' }"
     :map-search-control="withSearch ? { position: 'top-left', placeholder: 'Search a Philly address' } : undefined"
     @load="(m: unknown) => emit('load', m)"
-    @click="(payload: unknown) => emit('click', payload)"
+    @click="(payload: any) => emit('click', { lngLat: payload.lngLat })"
     @search-result="(r: unknown) => emit('searchResult', r)"
   >
     <slot />
