@@ -17,7 +17,7 @@ const NAME_FIELD = 'AMENITY_NA'
 
 const rinks = ref<FeatureCollection<Point> | null>(null)
 const userLngLat = ref<[number, number] | null>(null)
-const hoveredIdx = ref<number | null>(null)
+const selectedIdx = ref<number | null>(null)
 const error = ref<string | null>(null)
 
 onMounted(async () => {
@@ -37,13 +37,11 @@ const rinkLngLat = (idx: number): [number, number] => {
   return [c[0], c[1]]
 }
 
-const labels = computed<string[]>(() => {
-  if (!rinks.value) return []
-  return rinks.value.features.map((rink, idx) => {
-    const name = rinkName(idx)
-    if (!userLngLat.value) return name
-    const miles = distance(point(userLngLat.value), rink as Feature<Point>, { units: 'miles' })
-    return `${name} — ${miles.toFixed(2)} mi`
+const distanceLabels = computed<(string | undefined)[]>(() => {
+  if (!rinks.value || !userLngLat.value) return []
+  return rinks.value.features.map((rink) => {
+    const miles = distance(point(userLngLat.value!), rink as Feature<Point>, { units: 'miles' })
+    return `${miles.toFixed(2)} mi`
   })
 })
 
@@ -59,11 +57,11 @@ const onSearchResult = (result: unknown) => {
 }
 
 const popupLngLat = computed<[number, number] | null>(() => {
-  return hoveredIdx.value !== null ? rinkLngLat(hoveredIdx.value) : null
+  return selectedIdx.value !== null ? rinkLngLat(selectedIdx.value) : null
 })
 
 const popupName = computed<string>(() => {
-  return hoveredIdx.value !== null ? rinkName(hoveredIdx.value) : ''
+  return selectedIdx.value !== null ? rinkName(selectedIdx.value) : ''
 })
 </script>
 
@@ -81,8 +79,8 @@ const popupName = computed<string>(() => {
         </p>
         <p>
           Search an address (top-left of the map) or click anywhere. Each ice
-          rink's label updates to show how far it is from your point. Hover a
-          pin to see just the rink name.
+          rink's pin shows its distance from your point. Click a pin to see
+          its name in a popup.
         </p>
         <p v-if="error" style="color: var(--color-text-error, #b21d10);">
           Couldn't load rinks: {{ error }}
@@ -100,16 +98,20 @@ const popupName = computed<string>(() => {
           >
             <MapIconTextPin
               :icon="faSnowflake"
-              :text="labels[idx]"
+              :text="distanceLabels[idx]"
               color-theme="dark-primary"
               size="large"
-              @mouseenter="hoveredIdx = idx"
-              @mouseleave="hoveredIdx = null"
+              @click="selectedIdx = idx"
             />
           </MapMarker>
         </template>
 
-        <MapPopup v-if="popupLngLat" :lng-lat="popupLngLat" :close-on-click="false">
+        <MapPopup
+          v-if="popupLngLat"
+          :lng-lat="popupLngLat"
+          :close-on-click="false"
+          @close="selectedIdx = null"
+        >
           <div style="padding: 4px 8px;">
             <strong>{{ popupName }}</strong>
           </div>
