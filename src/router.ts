@@ -36,6 +36,16 @@ const routes: RouteRecordRaw[] = [
     name: 'buffer',
     component: () => import('./examples/buffer/BufferPage.vue'),
   },
+  {
+    path: '/examples/points-within-polygon',
+    name: 'points-within-polygon',
+    component: () => import('./examples/points-within-polygon/PointsWithinPolygonPage.vue'),
+  },
+  {
+    path: '/examples/centroid',
+    name: 'centroid',
+    component: () => import('./examples/centroid/CentroidPage.vue'),
+  },
 ]
 
 export const router = createRouter({

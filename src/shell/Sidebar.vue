@@ -9,6 +9,8 @@ const items = [
   { to: '/examples/nearest-point', label: 'nearestPoint' },
   { to: '/examples/distance', label: 'distance' },
   { to: '/examples/buffer', label: 'buffer' },
+  { to: '/examples/points-within-polygon', label: 'pointsWithinPolygon' },
+  { to: '/examples/centroid', label: 'centroid / centerOfMass' },
 ]
 </script>
 
