@@ -11,6 +11,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('./examples/geojson-helpers/GeojsonHelpersPage.vue'),
   },
   {
+    path: '/examples/bbox',
+    name: 'bbox',
+    component: () => import('./examples/bbox/BboxPage.vue'),
+  },
+  {
     path: '/examples/nearest-point',
     name: 'nearest-point',
     component: () => import('./examples/nearest-point/NearestPointPage.vue'),

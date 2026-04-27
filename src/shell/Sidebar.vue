@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 
 const items = [
   { to: '/examples/geojson-helpers', label: 'point / line / polygon' },
+  { to: '/examples/bbox', label: 'bbox' },
   { to: '/examples/nearest-point', label: 'nearestPoint' },
   { to: '/examples/distance', label: 'distance' },
   { to: '/examples/buffer', label: 'buffer' },
