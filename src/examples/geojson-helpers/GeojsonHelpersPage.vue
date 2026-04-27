@@ -37,6 +37,8 @@ const oldCity = polygon(
 const pointSource = computed(() => ({ type: 'geojson' as const, data: { type: 'FeatureCollection' as const, features: [cityHall] } }))
 const lineSource = computed(() => ({ type: 'geojson' as const, data: { type: 'FeatureCollection' as const, features: [broadSt] } }))
 const polySource = computed(() => ({ type: 'geojson' as const, data: { type: 'FeatureCollection' as const, features: [oldCity] } }))
+
+const pretty = (v: unknown) => JSON.stringify(v, null, 2)
 </script>
 
 <template>
@@ -56,6 +58,21 @@ const polySource = computed(() => ({ type: 'geojson' as const, data: { type: 'Fe
           <strong>lineString</strong> along North Broad, and a
           <strong>polygon</strong> outlining Old City.
         </p>
+        <p>
+          The values you'd see in the browser console after each call:
+        </p>
+        <div class="console">
+          <div class="console-prompt">&gt; cityHall</div>
+          <pre>{{ pretty(cityHall) }}</pre>
+        </div>
+        <div class="console">
+          <div class="console-prompt">&gt; broadSt</div>
+          <pre>{{ pretty(broadSt) }}</pre>
+        </div>
+        <div class="console">
+          <div class="console-prompt">&gt; oldCity</div>
+          <pre>{{ pretty(oldCity) }}</pre>
+        </div>
       </CodePanel>
     </template>
     <template #map>
@@ -90,3 +107,28 @@ const polySource = computed(() => ({ type: 'geojson' as const, data: { type: 'Fe
     </template>
   </ExamplePage>
 </template>
+
+<style scoped>
+.console {
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Courier New', monospace;
+  font-size: 0.8rem;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+  overflow-x: auto;
+  margin-top: 0.5rem;
+}
+
+.console-prompt {
+  color: #6cb6ff;
+  margin-bottom: 0.25rem;
+}
+
+.console pre {
+  margin: 0;
+  white-space: pre;
+  font: inherit;
+  color: inherit;
+}
+</style>
