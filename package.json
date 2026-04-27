@@ -15,7 +15,7 @@
     "@fortawesome/vue-fontawesome": "^3.1.2",
     "@phila/phila-ui-app-header": "latest",
     "@phila/phila-ui-core": "latest",
-    "@phila/phila-ui-map-core": "latest",
+    "@phila/phila-ui-map-core": "1.0.1-beta.7",
     "@turf/distance": "^7.0.0",
     "@turf/helpers": "^7.0.0",
     "@turf/nearest-point": "^7.0.0",
