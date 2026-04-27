@@ -20,9 +20,6 @@ importers:
       '@phila/phila-ui-app-header':
         specifier: latest
         version: 0.2.2(@fortawesome/fontawesome-svg-core@7.2.0)(@fortawesome/vue-fontawesome@3.2.0(@fortawesome/fontawesome-svg-core@7.2.0)(vue@3.5.33(typescript@5.6.3)))(vue-router@4.6.4(vue@3.5.33(typescript@5.6.3)))(vue@3.5.33(typescript@5.6.3))
-      '@phila/phila-ui-button':
-        specifier: latest
-        version: 2.2.2(@fortawesome/fontawesome-svg-core@7.2.0)(@fortawesome/vue-fontawesome@3.2.0(@fortawesome/fontawesome-svg-core@7.2.0)(vue@3.5.33(typescript@5.6.3)))(vue-router@4.6.4(vue@3.5.33(typescript@5.6.3)))(vue@3.5.33(typescript@5.6.3))
       '@phila/phila-ui-core':
         specifier: latest
         version: 2.3.2(@fortawesome/fontawesome-svg-core@7.2.0)(@fortawesome/vue-fontawesome@3.2.0(@fortawesome/fontawesome-svg-core@7.2.0)(vue@3.5.33(typescript@5.6.3)))(vue-router@4.6.4(vue@3.5.33(typescript@5.6.3)))(vue@3.5.33(typescript@5.6.3))
