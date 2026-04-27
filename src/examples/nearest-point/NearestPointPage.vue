@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { point } from '@turf/helpers'
 import { nearestPoint } from '@turf/nearest-point'
 import type { Feature, FeatureCollection, Point } from 'geojson'
-import { CircleLayer, MapMarker, MapTooltip } from '@phila/phila-ui-map-core'
+import { CircleLayer, MapPopup } from '@phila/phila-ui-map-core'
 import ExamplePage from '../../shell/ExamplePage.vue'
 import DemoMap from '../../components/DemoMap.vue'
 import CodePanel from '../../components/CodePanel.vue'
@@ -51,7 +51,7 @@ const marketsSource = computed(() => {
   return { type: 'geojson' as const, data: annotated }
 })
 
-const tooltipFeature = computed<Feature<Point> | null>(() => {
+const popupFeature = computed<Feature<Point> | null>(() => {
   if (hoveredFeature.value) return hoveredFeature.value
   if (nearestIndex.value !== null && markets.value) {
     return markets.value.features[nearestIndex.value]
@@ -59,15 +59,15 @@ const tooltipFeature = computed<Feature<Point> | null>(() => {
   return null
 })
 
-const tooltipLngLat = computed<[number, number] | null>(() => {
-  const f = tooltipFeature.value
+const popupLngLat = computed<[number, number] | null>(() => {
+  const f = popupFeature.value
   if (!f) return null
   const c = f.geometry.coordinates
   return [c[0], c[1]]
 })
 
-const tooltipName = computed<string>(() => {
-  return String(tooltipFeature.value?.properties?.[NAME_FIELD] ?? '')
+const popupName = computed<string>(() => {
+  return String(popupFeature.value?.properties?.[NAME_FIELD] ?? '')
 })
 
 const onMapClick = (payload: { lngLat: { lng: number; lat: number } }) => {
@@ -131,26 +131,37 @@ const onCircleLeave = () => {
           @mouseleave="onCircleLeave"
         />
 
-        <MapMarker v-if="tooltipLngLat" :lng-lat="tooltipLngLat">
-          <MapTooltip :visible="true">{{ tooltipName }}</MapTooltip>
-        </MapMarker>
+        <MapPopup v-if="popupLngLat" :lng-lat="popupLngLat" :close-on-click="false">
+          <div style="padding: 4px 8px;">
+            <strong>{{ popupName }}</strong>
+          </div>
+        </MapPopup>
 
-        <!-- The user's clicked/searched point as a small distinct marker. -->
-        <MapMarker v-if="userLngLat" :lng-lat="userLngLat">
-          <div class="user-marker" />
-        </MapMarker>
+        <!-- The user's clicked/searched point. -->
+        <CircleLayer
+          v-if="userLngLat"
+          id="user-point"
+          :source="{
+            type: 'geojson',
+            data: {
+              type: 'FeatureCollection',
+              features: [
+                {
+                  type: 'Feature',
+                  geometry: { type: 'Point', coordinates: userLngLat },
+                  properties: {},
+                },
+              ],
+            },
+          }"
+          :paint="{
+            'circle-radius': 8,
+            'circle-color': '#2c3e50',
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 3,
+          }"
+        />
       </DemoMap>
     </template>
   </ExamplePage>
 </template>
-
-<style scoped>
-.user-marker {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #2c3e50;
-  border: 3px solid #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-}
-</style>
