@@ -1,0 +1,34 @@
+/* Phila design tokens + base styles */
+@import '@phila/phila-ui-core/styles/tokens.css';
+@import '@phila/phila-ui-core/styles/typography.css';
+@import '@phila/phila-ui-core/styles/template-light.css';
+
+/* Map-core styles */
+@import '@phila/phila-ui-map-core/dist/assets/phila-ui-map-core.css';
+
+/* Reset + edge-to-edge layout */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-family-default, 'Montserrat', sans-serif);
+  color: var(--color-text-default, #0f1419);
+}
+
+a {
+  color: var(--color-text-link, #2176d2);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
