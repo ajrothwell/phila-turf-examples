@@ -11,6 +11,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('./examples/geojson-helpers/GeojsonHelpersPage.vue'),
   },
   {
+    path: '/examples/feature-collection',
+    name: 'feature-collection',
+    component: () => import('./examples/feature-collection/FeatureCollectionPage.vue'),
+  },
+  {
     path: '/examples/bbox',
     name: 'bbox',
     component: () => import('./examples/bbox/BboxPage.vue'),
