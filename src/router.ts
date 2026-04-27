@@ -20,6 +20,11 @@ const routes: RouteRecordRaw[] = [
     name: 'distance',
     component: () => import('./examples/distance/DistancePage.vue'),
   },
+  {
+    path: '/examples/buffer',
+    name: 'buffer',
+    component: () => import('./examples/buffer/BufferPage.vue'),
+  },
 ]
 
 export const router = createRouter({
