@@ -18,7 +18,7 @@
 }
 
 .code-panel {
-  width: 480px;
+  width: 600px;
   flex-shrink: 0;
   border-right: 1px solid var(--color-border-default, #d4d8d9);
   background: var(--color-surface-elevated, #f8f9fa);
