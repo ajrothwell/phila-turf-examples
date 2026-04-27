@@ -5,6 +5,7 @@ const items = [
   { to: '/examples/geojson-helpers', label: '1. point / line / polygon' },
   { to: '/examples/nearest-point', label: '2. nearestPoint' },
   { to: '/examples/distance', label: '3. distance' },
+  { to: '/examples/buffer', label: '4. buffer' },
 ]
 </script>
 
