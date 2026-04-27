@@ -46,6 +46,11 @@ const routes: RouteRecordRaw[] = [
     name: 'centroid',
     component: () => import('./examples/centroid/CentroidPage.vue'),
   },
+  {
+    path: '/examples/nearest-point-on-line',
+    name: 'nearest-point-on-line',
+    component: () => import('./examples/nearest-point-on-line/NearestPointOnLinePage.vue'),
+  },
 ]
 
 export const router = createRouter({

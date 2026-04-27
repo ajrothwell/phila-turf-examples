@@ -11,6 +11,7 @@ const items = [
   { to: '/examples/buffer', label: 'buffer' },
   { to: '/examples/points-within-polygon', label: 'pointsWithinPolygon' },
   { to: '/examples/centroid', label: 'centroid / centerOfMass' },
+  { to: '/examples/nearest-point-on-line', label: 'nearestPointOnLine' },
 ]
 </script>
 

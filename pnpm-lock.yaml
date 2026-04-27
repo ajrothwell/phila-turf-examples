@@ -44,6 +44,9 @@ importers:
       '@turf/centroid':
         specifier: ^7.3.5
         version: 7.3.5
+      '@turf/combine':
+        specifier: ^7.3.5
+        version: 7.3.5
       '@turf/distance':
         specifier: ^7.0.0
         version: 7.3.5
@@ -55,6 +58,9 @@ importers:
         version: 7.3.5
       '@turf/nearest-point':
         specifier: ^7.0.0
+        version: 7.3.5
+      '@turf/nearest-point-on-line':
+        specifier: ^7.3.5
         version: 7.3.5
       '@turf/point-on-feature':
         specifier: ^7.3.5
@@ -572,6 +578,9 @@ packages:
   '@turf/clone@7.3.5':
     resolution: {integrity: sha512-qfIaHj3410QEcTpiCRnTzhq8YrUp2gWrUIPLBAEFykopNxJkq1du1VrRzvuAo36ap2UV7KppkS6wGNypbcxswQ==}
 
+  '@turf/combine@7.3.5':
+    resolution: {integrity: sha512-olQH6WmLl3XAalbpiz7RSRr4/mogan38gvgDlo37ypW1ckeBUi+2TX5HgJUZq4wxa2gMlny72QYkqY9zW4Jw+A==}
+
   '@turf/convex@7.3.5':
     resolution: {integrity: sha512-d/pq86he+/GB/2ObuBHapeT15QFsCPhhGab3uE4YjogLMbD8qtu0sRGF+cvvPRDNuCLycOBL/xgFLnf9SteYlA==}
 
@@ -595,6 +604,9 @@ packages:
 
   '@turf/meta@7.3.5':
     resolution: {integrity: sha512-r+ohqxoyqeigFB0oFrQx/YEHIkOKqcKpCjvZkvZs7Tkv+IFco5MezAd2zd4rzK+0DfFgDP3KpJc7HqrYjvEjhg==}
+
+  '@turf/nearest-point-on-line@7.3.5':
+    resolution: {integrity: sha512-MZn6OkEFZpjS6BNUANfqiHMIbQSivu7TNji3a+OAIrnPJ71vp8cbz0N2aVEa5M7I8ipvxoxAPIV3eqg3h280Vg==}
 
   '@turf/nearest-point@7.3.5':
     resolution: {integrity: sha512-qcsbj9fo5CYhGeIDaJORoqiZyjNGu2+Te31MVaFoTTxqqkXypxp9e6HJGvUi2zPd1Zk3oAWXhvm1a+UXw2G56w==}
@@ -1535,6 +1547,13 @@ snapshots:
       '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
+  '@turf/combine@7.3.5':
+    dependencies:
+      '@turf/helpers': 7.3.5
+      '@turf/meta': 7.3.5
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
   '@turf/convex@7.3.5':
     dependencies:
       '@turf/helpers': 7.3.5
@@ -1583,6 +1602,15 @@ snapshots:
   '@turf/meta@7.3.5':
     dependencies:
       '@turf/helpers': 7.3.5
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/nearest-point-on-line@7.3.5':
+    dependencies:
+      '@turf/distance': 7.3.5
+      '@turf/helpers': 7.3.5
+      '@turf/invariant': 7.3.5
+      '@turf/meta': 7.3.5
       '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
