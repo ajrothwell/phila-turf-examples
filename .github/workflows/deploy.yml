@@ -29,6 +29,15 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      - name: Configure FontAwesome Pro registry
+        run: |
+          {
+            echo "@fortawesome:registry=https://npm.fontawesome.com/"
+            echo "//npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_AUTH_TOKEN}"
+          } >> .npmrc
+        env:
+          FONTAWESOME_NPM_AUTH_TOKEN: ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
+
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
