@@ -50,15 +50,14 @@ import Sidebar from './Sidebar.vue'
   padding-right: 1.25rem !important;
 }
 
-.phila-navbar-brand-link {
+.phila-navbar-brand a {
   font-size: 1.35rem !important;
   font-weight: 700 !important;
   text-decoration: none !important;
   letter-spacing: 0.01em !important;
-  padding: 0.5rem 0 !important;
 }
 
-.phila-navbar-brand-link:hover {
+.phila-navbar-brand a:hover {
   text-decoration: none !important;
   opacity: 0.85 !important;
 }
