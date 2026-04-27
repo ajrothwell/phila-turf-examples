@@ -42,6 +42,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('./examples/points-within-polygon/PointsWithinPolygonPage.vue'),
   },
   {
+    path: '/examples/area-perimeter',
+    name: 'area-perimeter',
+    component: () => import('./examples/area-perimeter/AreaPerimeterPage.vue'),
+  },
+  {
     path: '/examples/centroid',
     name: 'centroid',
     component: () => import('./examples/centroid/CentroidPage.vue'),

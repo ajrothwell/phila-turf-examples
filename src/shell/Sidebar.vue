@@ -10,6 +10,7 @@ const items = [
   { to: '/examples/distance', label: 'distance' },
   { to: '/examples/buffer', label: 'buffer' },
   { to: '/examples/points-within-polygon', label: 'pointsWithinPolygon' },
+  { to: '/examples/area-perimeter', label: 'area / perimeter' },
   { to: '/examples/centroid', label: 'centroid / centerOfMass' },
   { to: '/examples/nearest-point-on-line', label: 'nearestPointOnLine' },
 ]

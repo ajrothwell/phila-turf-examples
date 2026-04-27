@@ -21,7 +21,9 @@ import DemoMap from './components/DemoMap.vue'
         </blockquote>
         <p>
           Most of the code that makes a web map work is rendering, panning,
-          zooming, and handling clicks. This app uses
+          zooming, handling clicks, and adding controls and panels like
+          legends.
+          This app uses
           <a href="https://maplibre.org/" target="_blank" rel="noreferrer">
             MapLibre GL
           </a>

@@ -26,6 +26,9 @@ importers:
       '@phila/phila-ui-map-core':
         specifier: 1.0.1-beta.7
         version: 1.0.1-beta.7(@fortawesome/fontawesome-svg-core@7.2.0)(@fortawesome/pro-solid-svg-icons@7.2.0)(@fortawesome/vue-fontawesome@3.2.0(@fortawesome/fontawesome-svg-core@7.2.0)(vue@3.5.33(typescript@5.6.3)))(vue-router@4.6.4(vue@3.5.33(typescript@5.6.3)))(vue@3.5.33(typescript@5.6.3))
+      '@turf/area':
+        specifier: ^7.3.5
+        version: 7.3.5
       '@turf/bbox':
         specifier: ^7.3.5
         version: 7.3.5
@@ -56,6 +59,9 @@ importers:
       '@turf/intersect':
         specifier: ^7.3.5
         version: 7.3.5
+      '@turf/length':
+        specifier: ^7.3.5
+        version: 7.3.5
       '@turf/nearest-point':
         specifier: ^7.0.0
         version: 7.3.5
@@ -66,6 +72,9 @@ importers:
         specifier: ^7.3.5
         version: 7.3.5
       '@turf/points-within-polygon':
+        specifier: ^7.3.5
+        version: 7.3.5
+      '@turf/polygon-to-line':
         specifier: ^7.3.5
         version: 7.3.5
       '@turf/voronoi':
@@ -554,6 +563,9 @@ packages:
   '@shikijs/vscode-textmate@10.0.2':
     resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
 
+  '@turf/area@7.3.5':
+    resolution: {integrity: sha512-sSn80wPT7XfBIDN3vurCPxhk9W4U8ozS/XImSqeLN8qveTICOxzZkhsGDMp0CuncaN+plWut4a2TdNM7mzZB6Q==}
+
   '@turf/bbox-polygon@7.3.5':
     resolution: {integrity: sha512-Cs9Laej8zfSY51kORM9UcbY4Uf/7X3OIZr/LydbrmmARFSpYH/FZsEQjAGi1S1Q0aYbibVqjEUReHN3ZVsV5eA==}
 
@@ -602,6 +614,9 @@ packages:
   '@turf/jsts@2.7.2':
     resolution: {integrity: sha512-zAezGlwWHPyU0zxwcX2wQY3RkRpwuoBmhhNE9HY9kWhFDkCxZ3aWK5URKwa/SWKJbj9aztO+8vtdiBA28KVJFg==}
 
+  '@turf/length@7.3.5':
+    resolution: {integrity: sha512-Bi+vEP54wt1ly3BRcCOP0nd2kGTYEhGk6haQxTpkrqr3XtmqDh8c3NowSgseN2cegIZRjwCOEC8eSsZ0JemJdA==}
+
   '@turf/meta@7.3.5':
     resolution: {integrity: sha512-r+ohqxoyqeigFB0oFrQx/YEHIkOKqcKpCjvZkvZs7Tkv+IFco5MezAd2zd4rzK+0DfFgDP3KpJc7HqrYjvEjhg==}
 
@@ -616,6 +631,9 @@ packages:
 
   '@turf/points-within-polygon@7.3.5':
     resolution: {integrity: sha512-TRyVY5Xlx6j72sNIyBaHZNgTbILs2iUDevX5lnCFTiThkzp25BIBBQ77tv2VPilYH+v7+9/0T/pLO37SaVhsQw==}
+
+  '@turf/polygon-to-line@7.3.5':
+    resolution: {integrity: sha512-Mat5tvJcW3grpXCNFcMvjHL3d8hO4eoIgF3qYpXj25BHx/S7SJUOgyCV5x3arC0rCfM/cB71VmNDm9k57ec7bw==}
 
   '@turf/projection@7.3.5':
     resolution: {integrity: sha512-G4bejYKT0vCQZryMhEoS9aLmP7ThDg6nb3zi3wPzELiTrGNOd2YgkWVheQDGCk4hcqEIWZc9fI2alaRSSkkLVw==}
@@ -1485,6 +1503,13 @@ snapshots:
 
   '@shikijs/vscode-textmate@10.0.2': {}
 
+  '@turf/area@7.3.5':
+    dependencies:
+      '@turf/helpers': 7.3.5
+      '@turf/meta': 7.3.5
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
   '@turf/bbox-polygon@7.3.5':
     dependencies:
       '@turf/helpers': 7.3.5
@@ -1599,6 +1624,14 @@ snapshots:
     dependencies:
       jsts: 2.7.1
 
+  '@turf/length@7.3.5':
+    dependencies:
+      '@turf/distance': 7.3.5
+      '@turf/helpers': 7.3.5
+      '@turf/meta': 7.3.5
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
   '@turf/meta@7.3.5':
     dependencies:
       '@turf/helpers': 7.3.5
@@ -1638,6 +1671,13 @@ snapshots:
       '@turf/boolean-point-in-polygon': 7.3.5
       '@turf/helpers': 7.3.5
       '@turf/meta': 7.3.5
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/polygon-to-line@7.3.5':
+    dependencies:
+      '@turf/helpers': 7.3.5
+      '@turf/invariant': 7.3.5
       '@types/geojson': 7946.0.16
       tslib: 2.8.1
 
