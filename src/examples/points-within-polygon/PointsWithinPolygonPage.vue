@@ -67,13 +67,13 @@ const selectedPsa = computed<PsaFeature | null>(() => {
 const visibleHospitals = computed<FeatureCollection<Point>>(() => {
   if (!hospitals.value) return featureCollection<Point>([])
   if (!selectedPsa.value) return hospitals.value
-  return pointsWithinPolygon(hospitals.value, selectedPsa.value)
+  return pointsWithinPolygon(hospitals.value, selectedPsa.value) as FeatureCollection<Point>
 })
 
 const visiblePoliceStations = computed<FeatureCollection<Point>>(() => {
   if (!policeStations.value) return featureCollection<Point>([])
   if (!selectedPsa.value) return policeStations.value
-  return pointsWithinPolygon(policeStations.value, selectedPsa.value)
+  return pointsWithinPolygon(policeStations.value, selectedPsa.value) as FeatureCollection<Point>
 })
 // #endregion turf-usage
 
