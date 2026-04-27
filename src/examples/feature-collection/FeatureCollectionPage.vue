@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from 'vue'
+import type { Geometry } from 'geojson'
 // #region turf-import
 import { point, lineString, polygon, featureCollection } from '@turf/helpers'
 import { bbox } from '@turf/bbox'
@@ -41,7 +42,7 @@ const oldCity = polygon(
 )
 
 // #region turf-usage
-const everything = featureCollection([cityHall, broadSt, oldCity])
+const everything = featureCollection<Geometry>([cityHall, broadSt, oldCity])
 const everythingBbox = bbox(everything)
 const bboxAsPolygon = bboxPolygon(everythingBbox)
 // #endregion turf-usage
