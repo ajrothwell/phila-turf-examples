@@ -79,22 +79,28 @@ const pretty = (v: unknown) => JSON.stringify(v, null, 2)
 
         <div class="snippet" v-html="importHtml" />
 
-        <div class="snippet" v-html="pointHtml" />
-        <div class="console">
-          <div class="console-prompt">&gt; cityHall</div>
-          <pre>{{ pretty(cityHall) }}</pre>
+        <div class="block">
+          <div class="snippet" v-html="pointHtml" />
+          <div class="console">
+            <div class="console-prompt">&gt; cityHall</div>
+            <pre>{{ pretty(cityHall) }}</pre>
+          </div>
         </div>
 
-        <div class="snippet" v-html="lineHtml" />
-        <div class="console">
-          <div class="console-prompt">&gt; broadSt</div>
-          <pre>{{ pretty(broadSt) }}</pre>
+        <div class="block">
+          <div class="snippet" v-html="lineHtml" />
+          <div class="console">
+            <div class="console-prompt">&gt; broadSt</div>
+            <pre>{{ pretty(broadSt) }}</pre>
+          </div>
         </div>
 
-        <div class="snippet" v-html="polygonHtml" />
-        <div class="console">
-          <div class="console-prompt">&gt; oldCity</div>
-          <pre>{{ pretty(oldCity) }}</pre>
+        <div class="block">
+          <div class="snippet" v-html="polygonHtml" />
+          <div class="console">
+            <div class="console-prompt">&gt; oldCity</div>
+            <pre>{{ pretty(oldCity) }}</pre>
+          </div>
         </div>
       </CodePanel>
     </template>
@@ -132,6 +138,14 @@ const pretty = (v: unknown) => JSON.stringify(v, null, 2)
 </template>
 
 <style scoped>
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-default, #d4d8d9);
+}
+
 .snippet {
   font-size: 0.85rem;
   border: 1px solid var(--color-border-default, #d4d8d9);
