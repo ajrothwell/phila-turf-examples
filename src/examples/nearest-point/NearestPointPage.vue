@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, nextTick, onMounted, ref, watchEffect } from 'vue'
 import { point, featureCollection } from '@turf/helpers'
 import { nearestPoint } from '@turf/nearest-point'
 import { voronoi } from '@turf/voronoi'
@@ -115,12 +115,16 @@ const onMapClick = (payload: { lngLat: { lng: number; lat: number } }) => {
   userLngLat.value = [payload.lngLat.lng, payload.lngLat.lat]
 }
 
-const onSearchResult = (result: unknown) => {
+const onSearchResult = async (result: unknown) => {
   const r = result as { geometry?: { coordinates?: [number, number] } }
   if (!r?.geometry?.coordinates) return
   userLngLat.value = r.geometry.coordinates
 
-  // Fit the map to show the searched address and the nearest market together.
+  // MapSearchControl runs setCenter/setZoom synchronously after emitting `result`.
+  // Yield so it finishes first, then override with a fit-bounds covering the
+  // searched address AND the nearest market.
+  await nextTick()
+
   const idx = nearestIndex.value
   if (idx === null || !markets.value || !mapInstance.value?.fitBounds) return
   const [uLng, uLat] = r.geometry.coordinates
