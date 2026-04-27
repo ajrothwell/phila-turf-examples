@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import { point, featureCollection } from '@turf/helpers'
 import { nearestPoint } from '@turf/nearest-point'
 import { voronoi } from '@turf/voronoi'
 import { bbox } from '@turf/bbox'
 import { intersect } from '@turf/intersect'
 import type { Feature, FeatureCollection, Point, Polygon, MultiPolygon } from 'geojson'
-import { CircleLayer, FillLayer, LineLayer, MapPopup } from '@phila/phila-ui-map-core'
+import {
+  CircleLayer,
+  FillLayer,
+  LineLayer,
+  MapPopup,
+  MapSearchControl,
+} from '@phila/phila-ui-map-core'
 import ExamplePage from '../../shell/ExamplePage.vue'
 import DemoMap from '../../components/DemoMap.vue'
 import CodePanel from '../../components/CodePanel.vue'
@@ -115,15 +121,10 @@ const onMapClick = (payload: { lngLat: { lng: number; lat: number } }) => {
   userLngLat.value = [payload.lngLat.lng, payload.lngLat.lat]
 }
 
-const onSearchResult = async (result: unknown) => {
+const onSearchResult = (result: unknown) => {
   const r = result as { geometry?: { coordinates?: [number, number] } }
   if (!r?.geometry?.coordinates) return
   userLngLat.value = r.geometry.coordinates
-
-  // MapSearchControl runs setCenter/setZoom synchronously after emitting `result`.
-  // Yield so it finishes first, then override with a fit-bounds covering the
-  // searched address AND the nearest market.
-  await nextTick()
 
   const idx = nearestIndex.value
   if (idx === null || !markets.value || !mapInstance.value?.fitBounds) return
@@ -191,7 +192,13 @@ watchEffect(async () => {
     </template>
 
     <template #map>
-      <DemoMap with-search @load="onMapLoad" @click="onMapClick" @search-result="onSearchResult">
+      <DemoMap @load="onMapLoad" @click="onMapClick">
+        <MapSearchControl
+          position="top-left"
+          placeholder="Search a Philly address"
+          :center-on-result="false"
+          @result="onSearchResult"
+        />
         <FillLayer
           v-if="voronoiOn"
           id="voronoi-fill"
