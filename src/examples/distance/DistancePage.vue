@@ -96,13 +96,15 @@ const popupName = computed<string>(() => {
             :key="idx"
             :lng-lat="rinkLngLat(idx)"
           >
-            <MapIconTextPin
-              :icon="faSnowflake"
-              :text="distanceLabels[idx]"
-              color-theme="dark-primary"
-              size="large"
-              @click="selectedIdx = idx"
-            />
+            <div @click.stop>
+              <MapIconTextPin
+                :icon="faSnowflake"
+                :text="distanceLabels[idx]"
+                color-theme="dark-primary"
+                size="large"
+                @click="selectedIdx = idx"
+              />
+            </div>
           </MapMarker>
         </template>
 
