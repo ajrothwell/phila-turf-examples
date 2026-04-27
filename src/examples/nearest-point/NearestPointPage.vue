@@ -135,7 +135,7 @@ const onSearchResult = (result: unknown) => {
       [Math.min(uLng, mLng), Math.min(uLat, mLat)],
       [Math.max(uLng, mLng), Math.max(uLat, mLat)],
     ],
-    { padding: 80, maxZoom: 15, duration: 600 },
+    { padding: 120, maxZoom: 14, duration: 600 },
   )
 }
 
