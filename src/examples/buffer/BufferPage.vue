@@ -102,14 +102,7 @@ const bufferSource = computed(() => ({
 
 watch(bufferedFeature, (next) => {
   if (!next || !mapInstance.value?.fitBounds) return
-  const [minX, minY, maxX, maxY] = bbox(next)
-  mapInstance.value.fitBounds(
-    [
-      [minX, minY],
-      [maxX, maxY],
-    ],
-    { padding: 80, maxZoom: 13, duration: 600 },
-  )
+  mapInstance.value.fitBounds(bbox(next), { padding: 80, maxZoom: 13, duration: 600 })
 })
 
 watchEffect(async () => {
