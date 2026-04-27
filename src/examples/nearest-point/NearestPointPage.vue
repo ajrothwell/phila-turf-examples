@@ -26,6 +26,11 @@ const userLngLat = ref<[number, number] | null>(null)
 const hoveredFeature = ref<Feature<Point> | null>(null)
 const error = ref<string | null>(null)
 const voronoiOn = ref(false)
+const mapInstance = ref<any>(null)
+
+const onMapLoad = (m: unknown) => {
+  mapInstance.value = m
+}
 
 onMounted(async () => {
   try {
@@ -112,9 +117,21 @@ const onMapClick = (payload: { lngLat: { lng: number; lat: number } }) => {
 
 const onSearchResult = (result: unknown) => {
   const r = result as { geometry?: { coordinates?: [number, number] } }
-  if (r?.geometry?.coordinates) {
-    userLngLat.value = r.geometry.coordinates
-  }
+  if (!r?.geometry?.coordinates) return
+  userLngLat.value = r.geometry.coordinates
+
+  // Fit the map to show the searched address and the nearest market together.
+  const idx = nearestIndex.value
+  if (idx === null || !markets.value || !mapInstance.value?.fitBounds) return
+  const [uLng, uLat] = r.geometry.coordinates
+  const [mLng, mLat] = markets.value.features[idx].geometry.coordinates
+  mapInstance.value.fitBounds(
+    [
+      [Math.min(uLng, mLng), Math.min(uLat, mLat)],
+      [Math.max(uLng, mLng), Math.max(uLat, mLat)],
+    ],
+    { padding: 80, maxZoom: 15, duration: 600 },
+  )
 }
 
 const onCircleEnter = (e: any) => {
@@ -170,7 +187,7 @@ watchEffect(async () => {
     </template>
 
     <template #map>
-      <DemoMap with-search @click="onMapClick" @search-result="onSearchResult">
+      <DemoMap with-search @load="onMapLoad" @click="onMapClick" @search-result="onSearchResult">
         <FillLayer
           v-if="voronoiOn"
           id="voronoi-fill"
