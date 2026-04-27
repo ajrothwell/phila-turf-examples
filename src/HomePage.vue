@@ -21,8 +21,7 @@ import DemoMap from './components/DemoMap.vue'
         </blockquote>
         <p>
           Most of the code that makes a web map work is rendering, panning,
-          zooming, and handling clicks — the same machinery every map needs.
-          This app uses
+          zooming, and handling clicks. This app uses
           <a href="https://maplibre.org/" target="_blank" rel="noreferrer">
             MapLibre GL
           </a>
@@ -31,11 +30,11 @@ import DemoMap from './components/DemoMap.vue'
           much MapLibre to put a working map on a page.
         </p>
         <p>
-          Turf is different. Turf functions aren't UI components — they're GIS
-          math: distances, buffers, bounding boxes, point-in-polygon checks,
-          polygon unions. Think of it as ArcToolbox, but in JavaScript: a
-          toolbox of complicated math-and-geography functions you can call in
-          a couple of lines.
+          Turf functions aren't UI components — they're GIS math: distances,
+          buffers, bounding boxes, point-in-polygon checks, polygon unions.
+          Think of it as ArcToolbox, but in JavaScript: a toolbox of
+          complicated math and geography functions you can call in a couple
+          of lines.
         </p>
         <p>
           Many of these operations also exist in spatial SQL
@@ -45,9 +44,10 @@ import DemoMap from './components/DemoMap.vue'
           operations, different runtime.
         </p>
         <p>
-          Pick a lesson on the left to see real examples. Each page shows the
-          actual code from the running app, extracted from the source file so
-          what you read is what's running.
+          A lot of Turf's functions are also pretty boring — things you have
+          to learn because GIS datasets have mistakes (lines that don't quite
+          connect, polygon slivers caused by clipping shapes against each
+          other, etc.). Routine to use, not exactly exciting.
         </p>
       </article>
     </template>
