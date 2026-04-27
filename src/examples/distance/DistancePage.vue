@@ -4,7 +4,13 @@ import { point } from '@turf/helpers'
 import { distance } from '@turf/distance'
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons'
 import type { Feature, FeatureCollection, Point } from 'geojson'
-import { CircleLayer, MapMarker, MapIconTextPin, MapPopup } from '@phila/phila-ui-map-core'
+import {
+  CircleLayer,
+  MapMarker,
+  MapIconTextPin,
+  MapPopup,
+  MapSearchControl,
+} from '@phila/phila-ui-map-core'
 import ExamplePage from '../../shell/ExamplePage.vue'
 import DemoMap from '../../components/DemoMap.vue'
 import CodePanel from '../../components/CodePanel.vue'
@@ -89,7 +95,13 @@ const popupName = computed<string>(() => {
     </template>
 
     <template #map>
-      <DemoMap with-search @click="onMapClick" @search-result="onSearchResult">
+      <DemoMap @click="onMapClick">
+        <MapSearchControl
+          position="top-left"
+          placeholder="Search a Philly address"
+          :center-on-result="false"
+          @result="onSearchResult"
+        />
         <template v-if="rinks">
           <MapMarker
             v-for="(_, idx) in rinks.features"
