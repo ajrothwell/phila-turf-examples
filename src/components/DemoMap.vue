@@ -22,7 +22,7 @@ const emit = defineEmits<{
     :center="center ?? [-75.1635, 39.9526]"
     :zoom="zoom ?? 12"
     :basemap-change-controls="{ toggle: true, position: 'top-right' }"
-    :navigation-controls="{ position: 'top-right' }"
+    :navigation-controls="{ position: 'bottom-right' }"
     :map-search-control="withSearch ? { position: 'top-left', placeholder: 'Search a Philly address' } : undefined"
     @load="(m: unknown) => emit('load', m)"
     @click="(payload: any) => emit('click', { lngLat: payload.lngLat })"

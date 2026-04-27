@@ -18,8 +18,8 @@
 }
 
 .code-panel {
-  width: 600px;
-  flex-shrink: 0;
+  flex: 1 1 50%;
+  min-width: 0;
   border-right: 1px solid var(--color-border-default, #d4d8d9);
   background: var(--color-surface-elevated, #f8f9fa);
   overflow-y: auto;
@@ -27,7 +27,7 @@
 }
 
 .map-panel {
-  flex: 1;
+  flex: 1 1 50%;
   min-width: 0;
   position: relative;
   /* Map-core's <Map> is positioned absolute inside this. */
