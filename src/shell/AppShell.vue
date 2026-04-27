@@ -48,7 +48,7 @@ import Sidebar from './Sidebar.vue'
   padding-right: 1.25rem;
 }
 
-#app-header :deep(.phila-navbar-brand a) {
+#app-header :deep(.phila-navbar-brand-link) {
   font-size: 1.35rem;
   font-weight: 700;
   text-decoration: none;
@@ -56,7 +56,7 @@ import Sidebar from './Sidebar.vue'
   padding: 0.5rem 0;
 }
 
-#app-header :deep(.phila-navbar-brand a:hover) {
+#app-header :deep(.phila-navbar-brand-link:hover) {
   text-decoration: none;
   opacity: 0.85;
 }
