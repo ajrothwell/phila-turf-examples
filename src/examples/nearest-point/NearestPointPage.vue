@@ -2,8 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { point } from '@turf/helpers'
 import { nearestPoint } from '@turf/nearest-point'
-import type { FeatureCollection, Point } from 'geojson'
-import { MapMarker, MapTooltip } from '@phila/phila-ui-map-core'
+import type { Feature, FeatureCollection, Point } from 'geojson'
+import { CircleLayer, MapMarker, MapTooltip } from '@phila/phila-ui-map-core'
 import ExamplePage from '../../shell/ExamplePage.vue'
 import DemoMap from '../../components/DemoMap.vue'
 import CodePanel from '../../components/CodePanel.vue'
@@ -16,7 +16,7 @@ const NAME_FIELD = 'name'
 
 const markets = ref<FeatureCollection<Point> | null>(null)
 const userLngLat = ref<[number, number] | null>(null)
-const hoveredId = ref<string | null>(null)
+const hoveredFeature = ref<Feature<Point> | null>(null)
 const error = ref<string | null>(null)
 
 onMounted(async () => {
@@ -36,6 +36,40 @@ const nearestIndex = computed<number | null>(() => {
   return result.properties.featureIndex ?? null
 })
 
+const marketsSource = computed(() => {
+  if (!markets.value) {
+    return { type: 'geojson' as const, data: { type: 'FeatureCollection' as const, features: [] } }
+  }
+  const nIdx = nearestIndex.value
+  const annotated: FeatureCollection<Point> = {
+    type: 'FeatureCollection',
+    features: markets.value.features.map((f, i) => ({
+      ...f,
+      properties: { ...(f.properties ?? {}), isNearest: i === nIdx },
+    })),
+  }
+  return { type: 'geojson' as const, data: annotated }
+})
+
+const tooltipFeature = computed<Feature<Point> | null>(() => {
+  if (hoveredFeature.value) return hoveredFeature.value
+  if (nearestIndex.value !== null && markets.value) {
+    return markets.value.features[nearestIndex.value]
+  }
+  return null
+})
+
+const tooltipLngLat = computed<[number, number] | null>(() => {
+  const f = tooltipFeature.value
+  if (!f) return null
+  const c = f.geometry.coordinates
+  return [c[0], c[1]]
+})
+
+const tooltipName = computed<string>(() => {
+  return String(tooltipFeature.value?.properties?.[NAME_FIELD] ?? '')
+})
+
 const onMapClick = (payload: { lngLat: { lng: number; lat: number } }) => {
   userLngLat.value = [payload.lngLat.lng, payload.lngLat.lat]
 }
@@ -49,13 +83,13 @@ const onSearchResult = (result: unknown) => {
   }
 }
 
-const marketName = (idx: number) => {
-  return markets.value?.features[idx]?.properties?.[NAME_FIELD] ?? `Market ${idx + 1}`
+const onCircleEnter = (e: any) => {
+  const f = e.features?.[0]
+  if (f) hoveredFeature.value = f as Feature<Point>
 }
 
-const marketLngLat = (idx: number): [number, number] => {
-  const c = markets.value!.features[idx].geometry.coordinates
-  return [c[0], c[1]]
+const onCircleLeave = () => {
+  hoveredFeature.value = null
 }
 </script>
 
@@ -84,24 +118,22 @@ const marketLngLat = (idx: number): [number, number] => {
 
     <template #map>
       <DemoMap with-search @click="onMapClick" @search-result="onSearchResult">
-        <!-- Each market as its own MapMarker so we can attach a tooltip. -->
-        <template v-if="markets">
-          <MapMarker
-            v-for="(_, idx) in markets.features"
-            :key="idx"
-            :lng-lat="marketLngLat(idx)"
-          >
-            <div
-              class="circle-marker"
-              :class="{ 'is-nearest': idx === nearestIndex }"
-              @mouseenter="hoveredId = String(idx)"
-              @mouseleave="hoveredId = null"
-            />
-            <MapTooltip :visible="hoveredId === String(idx) || idx === nearestIndex">
-              {{ marketName(idx) }}
-            </MapTooltip>
-          </MapMarker>
-        </template>
+        <CircleLayer
+          id="markets"
+          :source="marketsSource"
+          :paint="{
+            'circle-radius': ['case', ['==', ['get', 'isNearest'], true], 14, 6],
+            'circle-color': ['case', ['==', ['get', 'isNearest'], true], '#27ae60', '#c0392b'],
+            'circle-stroke-color': '#fff',
+            'circle-stroke-width': 2,
+          }"
+          @mouseenter="onCircleEnter"
+          @mouseleave="onCircleLeave"
+        />
+
+        <MapMarker v-if="tooltipLngLat" :lng-lat="tooltipLngLat">
+          <MapTooltip :visible="true">{{ tooltipName }}</MapTooltip>
+        </MapMarker>
 
         <!-- The user's clicked/searched point as a small distinct marker. -->
         <MapMarker v-if="userLngLat" :lng-lat="userLngLat">
@@ -113,23 +145,6 @@ const marketLngLat = (idx: number): [number, number] => {
 </template>
 
 <style scoped>
-.circle-marker {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #c0392b;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: width 200ms ease, height 200ms ease;
-}
-
-.circle-marker.is-nearest {
-  width: 28px;
-  height: 28px;
-  background: #27ae60;
-}
-
 .user-marker {
   width: 18px;
   height: 18px;
