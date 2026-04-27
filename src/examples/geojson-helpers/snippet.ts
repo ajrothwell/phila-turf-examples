@@ -1,10 +1,8 @@
-export const TURF_SNIPPET = `import { point, lineString, polygon } from '@turf/helpers'
+export const IMPORT_SNIPPET = `import { point, lineString, polygon } from '@turf/helpers'`
 
-// A point — City Hall
-const cityHall = point([-75.1635, 39.9526], { name: 'City Hall' })
+export const POINT_SNIPPET = `const cityHall = point([-75.1635, 39.9526], { name: 'City Hall' })`
 
-// A lineString — a stretch of N. Broad St
-const broadSt = lineString(
+export const LINE_SNIPPET = `const broadSt = lineString(
   [
     [-75.1635, 39.9526],
     [-75.1623, 39.9583],
@@ -12,10 +10,9 @@ const broadSt = lineString(
     [-75.1597, 39.9700],
   ],
   { name: 'N. Broad St' }
-)
+)`
 
-// A polygon — a small loop in Old City
-const oldCity = polygon(
+export const POLYGON_SNIPPET = `const oldCity = polygon(
   [
     [
       [-75.1465, 39.9499],
@@ -26,5 +23,4 @@ const oldCity = polygon(
     ],
   ],
   { name: 'Old City' }
-)
-`
+)`

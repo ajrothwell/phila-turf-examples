@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { point, lineString, polygon } from '@turf/helpers'
 import {
   CircleLayer,
@@ -9,7 +9,13 @@ import {
 import ExamplePage from '../../shell/ExamplePage.vue'
 import DemoMap from '../../components/DemoMap.vue'
 import CodePanel from '../../components/CodePanel.vue'
-import { TURF_SNIPPET } from './snippet'
+import { highlight } from '../../lib/highlight'
+import {
+  IMPORT_SNIPPET,
+  POINT_SNIPPET,
+  LINE_SNIPPET,
+  POLYGON_SNIPPET,
+} from './snippet'
 
 const cityHall = point([-75.1635, 39.9526], { name: 'City Hall' })
 const broadSt = lineString(
@@ -38,6 +44,18 @@ const pointSource = computed(() => ({ type: 'geojson' as const, data: { type: 'F
 const lineSource = computed(() => ({ type: 'geojson' as const, data: { type: 'FeatureCollection' as const, features: [broadSt] } }))
 const polySource = computed(() => ({ type: 'geojson' as const, data: { type: 'FeatureCollection' as const, features: [oldCity] } }))
 
+const importHtml = ref('')
+const pointHtml = ref('')
+const lineHtml = ref('')
+const polygonHtml = ref('')
+
+watchEffect(async () => {
+  importHtml.value = await highlight(IMPORT_SNIPPET, 'ts')
+  pointHtml.value = await highlight(POINT_SNIPPET, 'ts')
+  lineHtml.value = await highlight(LINE_SNIPPET, 'ts')
+  polygonHtml.value = await highlight(POLYGON_SNIPPET, 'ts')
+})
+
 const pretty = (v: unknown) => JSON.stringify(v, null, 2)
 </script>
 
@@ -46,7 +64,6 @@ const pretty = (v: unknown) => JSON.stringify(v, null, 2)
     <template #code>
       <CodePanel
         title="point / lineString / polygon"
-        :snippet="TURF_SNIPPET"
         source-path="src/examples/geojson-helpers/GeojsonHelpersPage.vue"
       >
         <p>
@@ -56,19 +73,25 @@ const pretty = (v: unknown) => JSON.stringify(v, null, 2)
         <p>
           Below: a <strong>point</strong> at City Hall, a
           <strong>lineString</strong> along North Broad, and a
-          <strong>polygon</strong> outlining Old City.
+          <strong>polygon</strong> outlining Old City. Each call's return value
+          is shown in a console block below it.
         </p>
-        <p>
-          The values you'd see in the browser console after each call:
-        </p>
+
+        <div class="snippet" v-html="importHtml" />
+
+        <div class="snippet" v-html="pointHtml" />
         <div class="console">
           <div class="console-prompt">&gt; cityHall</div>
           <pre>{{ pretty(cityHall) }}</pre>
         </div>
+
+        <div class="snippet" v-html="lineHtml" />
         <div class="console">
           <div class="console-prompt">&gt; broadSt</div>
           <pre>{{ pretty(broadSt) }}</pre>
         </div>
+
+        <div class="snippet" v-html="polygonHtml" />
         <div class="console">
           <div class="console-prompt">&gt; oldCity</div>
           <pre>{{ pretty(oldCity) }}</pre>
@@ -109,6 +132,20 @@ const pretty = (v: unknown) => JSON.stringify(v, null, 2)
 </template>
 
 <style scoped>
+.snippet {
+  font-size: 0.85rem;
+  border: 1px solid var(--color-border-default, #d4d8d9);
+  border-radius: 4px;
+  overflow-x: auto;
+  background: #fff;
+}
+
+.snippet :deep(pre) {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: transparent !important;
+}
+
 .console {
   font-family: ui-monospace, SFMono-Regular, Consolas, 'Courier New', monospace;
   font-size: 0.8rem;
@@ -117,7 +154,6 @@ const pretty = (v: unknown) => JSON.stringify(v, null, 2)
   border-radius: 4px;
   padding: 0.6rem 0.75rem;
   overflow-x: auto;
-  margin-top: 0.5rem;
 }
 
 .console-prompt {

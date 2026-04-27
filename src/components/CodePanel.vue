@@ -5,8 +5,8 @@ import { highlight } from '../lib/highlight'
 const props = defineProps<{
   /** Page title shown above the prose intro. */
   title: string
-  /** The curated Turf snippet (string of TypeScript). */
-  snippet: string
+  /** The curated Turf snippet (string of TypeScript). Omit to render only the slot content. */
+  snippet?: string
   /** Path within the repo to the example's .vue file (used for the GitHub link). */
   sourcePath: string
 }>()
@@ -17,6 +17,10 @@ const githubUrl = `${REPO_BASE}/${props.sourcePath}`
 const highlighted = ref<string>('')
 
 watchEffect(async () => {
+  if (!props.snippet) {
+    highlighted.value = ''
+    return
+  }
   highlighted.value = await highlight(props.snippet, 'ts')
 })
 </script>
@@ -27,7 +31,7 @@ watchEffect(async () => {
     <div class="prose">
       <slot />
     </div>
-    <div class="snippet" v-html="highlighted" />
+    <div v-if="snippet" class="snippet" v-html="highlighted" />
     <a class="source-link" :href="githubUrl" target="_blank" rel="noreferrer">
       View full source on GitHub →
     </a>
