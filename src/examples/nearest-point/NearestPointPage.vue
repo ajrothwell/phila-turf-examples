@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watchEffect } from 'vue'
-import { point, featureCollection } from '@turf/helpers'
+// #region nearest-import
+import { point } from '@turf/helpers'
 import { nearestPoint } from '@turf/nearest-point'
+// #endregion nearest-import
+// #region voronoi-import
+import { featureCollection } from '@turf/helpers'
 import { voronoi } from '@turf/voronoi'
 import { bbox } from '@turf/bbox'
 import { intersect } from '@turf/intersect'
+// #endregion voronoi-import
 import type { Feature, FeatureCollection, Point, Polygon, MultiPolygon } from 'geojson'
 import {
   CircleLayer,
@@ -18,7 +23,8 @@ import DemoMap from '../../components/DemoMap.vue'
 import CodePanel from '../../components/CodePanel.vue'
 import { highlight } from '../../lib/highlight'
 import { fetchAgolFeatures } from '../../lib/arcgis'
-import { TURF_SNIPPET, VORONOI_SNIPPET } from './snippet'
+import { extractRegions } from '../../lib/extractRegions'
+import pageSource from './NearestPointPage.vue?raw'
 
 const FARMERS_SERVICE_URL =
   'https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Farmers_Markets/FeatureServer/0'
@@ -54,12 +60,14 @@ onMounted(async () => {
   }
 })
 
+// #region nearest-usage
 const nearestIndex = computed<number | null>(() => {
   if (!markets.value || !userLngLat.value) return null
   const userPoint = point(userLngLat.value)
   const result = nearestPoint(userPoint, markets.value as FeatureCollection<Point>)
   return result.properties.featureIndex ?? null
 })
+// #endregion nearest-usage
 
 const marketsSource = computed(() => {
   if (!markets.value) {
@@ -76,6 +84,7 @@ const marketsSource = computed(() => {
   return { type: 'geojson' as const, data: annotated }
 })
 
+// #region voronoi-usage
 const voronoiCells = computed<FeatureCollection<Polygon | MultiPolygon> | null>(() => {
   if (!markets.value || !cityLimits.value) return null
   const cityBbox = bbox(cityLimits.value)
@@ -90,6 +99,7 @@ const voronoiCells = computed<FeatureCollection<Polygon | MultiPolygon> | null>(
   }
   return featureCollection(clipped)
 })
+// #endregion voronoi-usage
 
 const voronoiSource = computed(() => {
   return {
@@ -148,11 +158,27 @@ const onCircleLeave = () => {
   hoveredFeature.value = null
 }
 
-const nearestHtml = ref('')
-const voronoiHtml = ref('')
+const nearestScriptHtml = ref('')
+const nearestTemplateHtml = ref('')
+const voronoiScriptHtml = ref('')
+const voronoiTemplateHtml = ref('')
 watchEffect(async () => {
-  nearestHtml.value = await highlight(TURF_SNIPPET, 'ts')
-  voronoiHtml.value = await highlight(VORONOI_SNIPPET, 'ts')
+  nearestScriptHtml.value = await highlight(
+    extractRegions(pageSource, ['nearest-import', 'nearest-usage']),
+    'ts',
+  )
+  nearestTemplateHtml.value = await highlight(
+    extractRegions(pageSource, ['nearest-template']),
+    'vue',
+  )
+  voronoiScriptHtml.value = await highlight(
+    extractRegions(pageSource, ['voronoi-import', 'voronoi-usage']),
+    'ts',
+  )
+  voronoiTemplateHtml.value = await highlight(
+    extractRegions(pageSource, ['voronoi-template']),
+    'vue',
+  )
 })
 </script>
 
@@ -175,7 +201,9 @@ watchEffect(async () => {
         <p v-if="error" style="color: var(--color-text-error, #b21d10);">
           Couldn't load markets: {{ error }}
         </p>
-        <div class="snippet" v-html="nearestHtml" />
+        <div class="snippet" v-html="nearestScriptHtml" />
+        <p class="snippet-label">And in the template:</p>
+        <div class="snippet" v-html="nearestTemplateHtml" />
 
         <section class="bonus">
           <div class="bonus-label">BONUS LESSON</div>
@@ -186,7 +214,9 @@ watchEffect(async () => {
             polygon contains every point in the city closer to that market
             than to any other.
           </p>
-          <div class="snippet" v-html="voronoiHtml" />
+          <div class="snippet" v-html="voronoiScriptHtml" />
+          <p class="snippet-label">And in the template:</p>
+          <div class="snippet" v-html="voronoiTemplateHtml" />
         </section>
       </CodePanel>
     </template>
@@ -199,6 +229,7 @@ watchEffect(async () => {
           :center-on-result="false"
           @result="onSearchResult"
         />
+        <!-- #region voronoi-template -->
         <FillLayer
           v-if="voronoiOn"
           id="voronoi-fill"
@@ -218,7 +249,9 @@ watchEffect(async () => {
             'line-opacity': 1,
           }"
         />
+        <!-- #endregion voronoi-template -->
 
+        <!-- #region nearest-template -->
         <CircleLayer
           id="markets"
           :source="marketsSource"
@@ -231,6 +264,7 @@ watchEffect(async () => {
           @mouseenter="onCircleEnter"
           @mouseleave="onCircleLeave"
         />
+        <!-- #endregion nearest-template -->
 
         <MapPopup v-if="popupLngLat" :lng-lat="popupLngLat" :close-on-click="false">
           <div style="padding: 4px 8px;">
@@ -288,6 +322,12 @@ watchEffect(async () => {
   margin: 0;
   padding: 0.75rem 1rem;
   background: transparent !important;
+}
+
+.snippet-label {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #444);
 }
 
 .bonus {

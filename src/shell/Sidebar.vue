@@ -2,10 +2,16 @@
 import { RouterLink } from 'vue-router'
 
 const items = [
-  { to: '/examples/geojson-helpers', label: '1. point / line / polygon' },
-  { to: '/examples/nearest-point', label: '2. nearestPoint' },
-  { to: '/examples/distance', label: '3. distance' },
-  { to: '/examples/buffer', label: '4. buffer' },
+  { to: '/', label: 'Intro' },
+  { to: '/examples/geojson-helpers', label: 'point / line / polygon' },
+  { to: '/examples/feature-collection', label: 'featureCollection' },
+  { to: '/examples/bbox', label: 'bbox' },
+  { to: '/examples/nearest-point', label: 'nearestPoint' },
+  { to: '/examples/distance', label: 'distance' },
+  { to: '/examples/buffer', label: 'buffer' },
+  { to: '/examples/points-within-polygon', label: 'pointsWithinPolygon' },
+  { to: '/examples/centroid', label: 'centroid / centerOfMass' },
+  { to: '/examples/nearest-point-on-line', label: 'nearestPointOnLine' },
 ]
 </script>
 

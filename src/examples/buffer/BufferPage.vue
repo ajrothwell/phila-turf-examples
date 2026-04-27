@@ -3,7 +3,9 @@ import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import type { Feature, FeatureCollection, Polygon, MultiPolygon } from 'geojson'
 import { point } from '@turf/helpers'
 import { booleanPointInPolygon } from '@turf/boolean-point-in-polygon'
+// #region turf-import
 import { buffer } from '@turf/buffer'
+// #endregion turf-import
 import { bbox } from '@turf/bbox'
 import { FillLayer, LineLayer } from '@phila/phila-ui-map-core'
 import ExamplePage from '../../shell/ExamplePage.vue'
@@ -11,7 +13,8 @@ import DemoMap from '../../components/DemoMap.vue'
 import CodePanel from '../../components/CodePanel.vue'
 import { fetchAgolFeatures } from '../../lib/arcgis'
 import { highlight } from '../../lib/highlight'
-import { buildSnippet } from './snippet'
+import { extractRegions } from '../../lib/extractRegions'
+import pageSource from './BufferPage.vue?raw'
 
 const ZIPCODES_SERVICE_URL =
   'https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Zipcodes_Poly/FeatureServer/0'
@@ -26,7 +29,8 @@ const searchInput = ref('')
 const searchError = ref<string | null>(null)
 const error = ref<string | null>(null)
 const mapInstance = ref<any>(null)
-const snippetHtml = ref('')
+const scriptSnippetHtml = ref('')
+const templateSnippetHtml = ref('')
 
 onMounted(async () => {
   try {
@@ -83,11 +87,13 @@ const selectedSource = computed(() => ({
   data: selectedZip.value ?? { type: 'FeatureCollection' as const, features: [] },
 }))
 
+// #region turf-usage
 const bufferedFeature = computed<Feature<Polygon | MultiPolygon> | null>(() => {
   if (!selectedZip.value) return null
   const result = buffer(selectedZip.value, bufferMiles.value, { units: 'miles' })
   return result ?? null
 })
+// #endregion turf-usage
 
 const bufferSource = computed(() => ({
   type: 'geojson' as const,
@@ -96,18 +102,18 @@ const bufferSource = computed(() => ({
 
 watch(bufferedFeature, (next) => {
   if (!next || !mapInstance.value?.fitBounds) return
-  const [minX, minY, maxX, maxY] = bbox(next)
-  mapInstance.value.fitBounds(
-    [
-      [minX, minY],
-      [maxX, maxY],
-    ],
-    { padding: 80, maxZoom: 13, duration: 600 },
-  )
+  mapInstance.value.fitBounds(bbox(next), { padding: 80, maxZoom: 13, duration: 600 })
 })
 
 watchEffect(async () => {
-  snippetHtml.value = await highlight(buildSnippet(bufferMiles.value), 'ts')
+  scriptSnippetHtml.value = await highlight(
+    extractRegions(pageSource, ['turf-import', 'turf-usage']),
+    'ts',
+  )
+  templateSnippetHtml.value = await highlight(
+    extractRegions(pageSource, ['turf-template']),
+    'vue',
+  )
 })
 </script>
 
@@ -126,11 +132,14 @@ watchEffect(async () => {
         <p v-if="error" style="color: var(--color-text-error, #b21d10);">
           Couldn't load zipcodes: {{ error }}
         </p>
-        <div class="snippet" v-html="snippetHtml" />
+        <div class="snippet" v-html="scriptSnippetHtml" />
+        <p class="snippet-label">And in the template:</p>
+        <div class="snippet" v-html="templateSnippetHtml" />
       </CodePanel>
     </template>
 
     <template #map>
+      <!-- #region turf-template -->
       <DemoMap @load="onMapLoad" @click="onMapClick">
         <FillLayer
           v-if="bufferedFeature"
@@ -150,6 +159,7 @@ watchEffect(async () => {
             'line-width': 1.5,
           }"
         />
+        <!-- #endregion turf-template -->
         <FillLayer
           v-if="selectedZip"
           id="selected-zip-fill"
@@ -212,6 +222,12 @@ watchEffect(async () => {
   margin: 0;
   padding: 0.75rem 1rem;
   background: transparent !important;
+}
+
+.snippet-label {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #444);
 }
 
 .buffer-control {
