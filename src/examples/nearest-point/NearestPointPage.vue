@@ -207,7 +207,7 @@ watchEffect(async () => {
 
         <section class="bonus">
           <div class="bonus-label">BONUS LESSON</div>
-          <h2>Voronoi triangles</h2>
+          <h2>Voronoi polygons</h2>
           <p>
             Toggle the button in the map's bottom-left to overlay the Voronoi
             diagram of the markets, clipped to Philly's city limits. Each
@@ -302,7 +302,7 @@ watchEffect(async () => {
         class="voronoi-toggle"
         @click="voronoiOn = !voronoiOn"
       >
-        {{ voronoiOn ? 'Hide' : 'Add' }} Voronoi triangles
+        {{ voronoiOn ? 'Hide' : 'Add' }} Voronoi polygons
       </button>
     </template>
   </ExamplePage>
