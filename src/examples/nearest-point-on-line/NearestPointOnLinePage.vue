@@ -157,10 +157,6 @@ watchEffect(async () => {
         <p v-if="error" style="color: var(--color-text-error, #b21d10);">
           Couldn't load bike network: {{ error }}
         </p>
-        <p v-if="snapDistance">
-          Closest point on <strong>{{ selectedStreet }}</strong>:
-          <strong>{{ snapDistance }}</strong> away.
-        </p>
         <div class="snippet" v-html="scriptSnippetHtml" />
       </CodePanel>
     </template>
@@ -238,6 +234,10 @@ watchEffect(async () => {
           </select>
           <span v-if="loading" class="spinner" aria-label="Loading bike network" />
         </div>
+        <p v-if="snapDistance" class="snap-result">
+          Closest point on <strong>{{ selectedStreet }}</strong>:
+          <strong>{{ snapDistance }}</strong> away.
+        </p>
       </div>
     </template>
   </ExamplePage>
@@ -286,6 +286,14 @@ watchEffect(async () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.snap-result {
+  margin: 0.4rem 0 0;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--color-border-default, #d4d8d9);
+  font-size: 0.85rem;
+  color: var(--color-text-default, #0f1419);
 }
 
 .street-control select {
