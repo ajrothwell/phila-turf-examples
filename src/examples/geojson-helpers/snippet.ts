@@ -2,6 +2,9 @@ export const IMPORT_SNIPPET = `import { point, lineString, polygon } from '@turf
 
 export const POINT_SNIPPET = `const cityHall = point([-75.1635, 39.9526], { name: 'City Hall' })`
 
+export const POINT_SQL_SNIPPET = `SELECT name, ST_Point(lng, lat) AS geom
+FROM places;`
+
 export const LINE_SNIPPET = `const broadSt = lineString(
   [
     [-75.1635, 39.9526],

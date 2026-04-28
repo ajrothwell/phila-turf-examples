@@ -13,6 +13,7 @@ import { highlight } from '../../lib/highlight'
 import {
   IMPORT_SNIPPET,
   POINT_SNIPPET,
+  POINT_SQL_SNIPPET,
   LINE_SNIPPET,
   POLYGON_SNIPPET,
 } from './snippet'
@@ -46,12 +47,14 @@ const polySource = computed(() => ({ type: 'geojson' as const, data: { type: 'Fe
 
 const importHtml = ref('')
 const pointHtml = ref('')
+const pointSqlHtml = ref('')
 const lineHtml = ref('')
 const polygonHtml = ref('')
 
 watchEffect(async () => {
   importHtml.value = await highlight(IMPORT_SNIPPET, 'ts')
   pointHtml.value = await highlight(POINT_SNIPPET, 'ts')
+  pointSqlHtml.value = await highlight(POINT_SQL_SNIPPET, 'sql')
   lineHtml.value = await highlight(LINE_SNIPPET, 'ts')
   polygonHtml.value = await highlight(POLYGON_SNIPPET, 'ts')
 })
@@ -70,24 +73,22 @@ const pretty = (v: unknown) => JSON.stringify(v, null, 2)
           Turf's helper functions wrap arrays of coordinates into typed GeoJSON
           features. Every other Turf function takes one of these shapes as input.
         </p>
-        <p>
-          Below: a <strong>point</strong> at City Hall, a
-          <strong>lineString</strong> along North Broad, and a
-          <strong>polygon</strong> outlining Old City. Each call's return value
-          is shown in a console block below it.
-        </p>
 
         <div class="snippet" v-html="importHtml" />
 
         <div class="block">
+          <h3>point</h3>
           <div class="snippet" v-html="pointHtml" />
           <div class="console">
             <div class="console-prompt">&gt; cityHall</div>
             <pre>{{ pretty(cityHall) }}</pre>
           </div>
+          <p class="sql-label">The same thing in SQL (PostGIS):</p>
+          <div class="snippet" v-html="pointSqlHtml" />
         </div>
 
         <div class="block">
+          <h3>line</h3>
           <div class="snippet" v-html="lineHtml" />
           <div class="console">
             <div class="console-prompt">&gt; broadSt</div>
@@ -96,6 +97,7 @@ const pretty = (v: unknown) => JSON.stringify(v, null, 2)
         </div>
 
         <div class="block">
+          <h3>polygon</h3>
           <div class="snippet" v-html="polygonHtml" />
           <div class="console">
             <div class="console-prompt">&gt; oldCity</div>
@@ -142,8 +144,23 @@ const pretty = (v: unknown) => JSON.stringify(v, null, 2)
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border-default, #d4d8d9);
+  margin-top: 2rem;
+}
+
+.block h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Courier New', monospace;
+}
+
+.sql-label {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #444);
+}
+
+.block + .block {
+  margin-top: 4rem;
 }
 
 .snippet {
