@@ -5,7 +5,7 @@ import { point } from '@turf/helpers'
 import { distance } from '@turf/distance'
 // #endregion turf-import
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons'
-import type { Feature, FeatureCollection, Point } from 'geojson'
+import type { FeatureCollection, Point } from 'geojson'
 import {
   CircleLayer,
   MapMarker,
@@ -51,7 +51,7 @@ const rinkLngLat = (index: number): [number, number] => {
 const distanceLabels = computed<(string | undefined)[]>(() => {
   if (!rinks.value || !userLngLat.value) return []
   return rinks.value.features.map((rink) => {
-    const miles = distance(point(userLngLat.value!), rink as Feature<Point>, { units: 'miles' })
+    const miles = distance(point(userLngLat.value!), rink, { units: 'miles' })
     return `${miles.toFixed(2)} mi`
   })
 })
