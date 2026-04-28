@@ -81,13 +81,12 @@ const templateSnippetHtml = ref('')
 const sqlSnippetHtml = ref('')
 
 const SQL_EXAMPLE = `SELECT
-  permit_number,
-  address,
+  ice_rink_name,
   ST_Distance(
     the_geom::geography,
     ST_SetSRID(ST_Point(-75.1635, 39.9526), 4326)::geography
   ) AS distance_meters
-FROM permits
+FROM ice_rinks
 ORDER BY distance_meters
 LIMIT 10`
 
