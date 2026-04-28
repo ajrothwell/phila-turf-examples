@@ -37,7 +37,7 @@ import DemoMap from './components/DemoMap.vue'
           Turf functions aren't part of UI components, so they are not part
           of map-core. They are complicated spatial functions using complicated math: distances, buffers, bounding boxes,
           point-in-polygon checks, polygon unions.
-          In Esri products you get to know and use things from ArcToolbox
+          In Esri products (ArcMap, ArcGIS Pro) you get to know and use things from ArcToolbox
           (or whatever that's called now). In Carto or PostGIS, you use
           spatial SQL (<code>ST_DISTANCE</code>, <code>ST_INTERSECTS</code>,
           <code>ST_BUFFER</code>, etc.). This is the same but you just use
