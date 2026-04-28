@@ -78,6 +78,18 @@ const popupName = computed<string>(() => {
 
 const scriptSnippetHtml = ref('')
 const templateSnippetHtml = ref('')
+const sqlSnippetHtml = ref('')
+
+const SQL_EXAMPLE = `SELECT
+  permit_number,
+  address,
+  ST_Distance(
+    the_geom::geography,
+    ST_SetSRID(ST_Point(-75.1635, 39.9526), 4326)::geography
+  ) AS distance_meters
+FROM permits
+ORDER BY distance_meters
+LIMIT 10`
 
 watchEffect(async () => {
   scriptSnippetHtml.value = await highlight(
@@ -88,6 +100,7 @@ watchEffect(async () => {
     extractRegions(pageSource, ['turf-template']),
     'vue',
   )
+  sqlSnippetHtml.value = await highlight(SQL_EXAMPLE, 'sql')
 })
 </script>
 
@@ -113,6 +126,18 @@ watchEffect(async () => {
         <div class="snippet" v-html="scriptSnippetHtml" />
         <p class="snippet-label">And in the template:</p>
         <div class="snippet" v-html="templateSnippetHtml" />
+
+        <section class="sql-aside">
+          <h2>The same thing in SQL</h2>
+          <p>
+            If you do this in PostGIS or Carto, it looks like:
+          </p>
+          <div class="snippet" v-html="sqlSnippetHtml" />
+          <p class="aside-note">
+            Same operation, different runtime — the database does the work
+            and you get back rows already sorted by distance.
+          </p>
+        </section>
       </CodePanel>
     </template>
 
@@ -203,5 +228,22 @@ watchEffect(async () => {
   margin: 0.75rem 0 0.25rem;
   font-size: 0.85rem;
   color: var(--color-text-secondary, #444);
+}
+
+.sql-aside {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border-default, #d4d8d9);
+}
+
+.sql-aside h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+}
+
+.sql-aside .aside-note {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #444);
+  margin-top: 0.75rem;
 }
 </style>
